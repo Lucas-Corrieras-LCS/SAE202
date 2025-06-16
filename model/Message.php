@@ -59,5 +59,24 @@ class Message
         $stmt->execute([$utilisateur_id]);
         return $stmt->fetchAll();
     }
+
+    public static function recupererMessagesEnvoyes($utilisateur_id, $pdo)
+    {
+        $stmt = $pdo->prepare("
+            SELECT m.*, u.prenom AS destinataire_prenom, u.nom AS destinataire_nom, u.email AS destinataire_email
+            FROM message m
+            JOIN user u ON m.destinataire_id = u.id
+            WHERE m.expediteur_id = ?
+            ORDER BY m.created_at DESC
+        ");
+        $stmt->execute([$utilisateur_id]);
+        return $stmt->fetchAll();
+    }
+
+    public static function supprimerMessage($message_id, $pdo)
+    {
+        $stmt = $pdo->prepare("DELETE FROM message WHERE id = ?");
+        $stmt->execute([$message_id]);
+    }
 }
 ?>

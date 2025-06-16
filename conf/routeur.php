@@ -16,7 +16,8 @@ $pages_autorisees = [
     'messagerie',
     'commentaire/proposer',
     'profil',
-    'deconnexion'
+    'deconnexion',
+    'supprimer_message'
 ];
 
 if (!in_array($page, $pages_autorisees)) {
@@ -50,6 +51,13 @@ if ($page === 'messagerie' && $_SERVER['REQUEST_METHOD'] === 'POST') {
     require_once 'controller/MessagerieController.php';
     $controller = new MessagerieController();
     $controller->envoyer();
+    exit;
+}
+
+if ($page === 'supprimer_message' && isset($_GET['id'])) {
+    require_once 'controller/MessagerieController.php';
+    $controller = new MessagerieController();
+    $controller->supprimer();
     exit;
 }
 
