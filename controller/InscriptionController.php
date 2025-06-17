@@ -20,11 +20,30 @@ class InscriptionController
                     $erreur = "Cet email est déjà utilisé.";
                 } else {
                     $utilisateur->inscrire($nom, $prenom, $email, $mot_de_passe, $age, $telephone);
-                    header('Location: /?page=connexion');
+
+                    if (
+                        !empty($_SERVER['HTTP_X_REQUESTED_WITH']) ||
+                        (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
+                    ) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => true]);
+                        exit;
+                    }
+
+                    header('Location: /connexion.html');
                     exit;
                 }
             } else {
                 $erreur = "Veuillez remplir tous les champs correctement.";
+            }
+
+            if (
+                !empty($_SERVER['HTTP_X_REQUESTED_WITH']) ||
+                (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
+            ) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => false, 'error' => $erreur ?? "Erreur inconnue"]);
+                exit;
             }
         }
 

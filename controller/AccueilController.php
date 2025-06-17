@@ -12,7 +12,7 @@ class AccueilController
             if (!empty($contenu)) {
                 $commentaireModel = new Commentaire($pdo);
                 $commentaireModel->ajouterCommentaire($_SESSION['user_id'], $contenu);
-                header('Location: /?page=accueil');
+                header('Location: /index.html');
                 exit;
             }
         }
@@ -25,6 +25,21 @@ class AccueilController
         $commentaires = $commentaireModel->obtenirCommentaires();
 
         require 'view/accueil.php';
+    }
+
+    public function json()
+    {
+        $model = new AccueilModel();
+        $donnees = $model->getAccueil();
+
+        $isConnected = isset($_SESSION['user_id']);
+        $isAdmin = !empty($_SESSION['is_admin']);
+
+        echo json_encode([
+            'commentaires' => $donnees,
+            'isConnected' => $isConnected,
+            'isAdmin' => $isAdmin
+        ]);
     }
 }
 ?>

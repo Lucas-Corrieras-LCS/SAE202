@@ -8,7 +8,17 @@ class DeconnexionController
     }
     session_unset();
     session_destroy();
-    header('Location: /?page=connexion');
+
+    if (
+      !empty($_SERVER['HTTP_X_REQUESTED_WITH']) ||
+      (isset($_SERVER['HTTP_ACCEPT']) && strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false)
+    ) {
+      header('Content-Type: application/json');
+      echo json_encode(['success' => true]);
+      exit;
+    }
+
+    header('Location: /connexion.html');
     exit;
   }
 }

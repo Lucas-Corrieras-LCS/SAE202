@@ -73,10 +73,10 @@ class Message
         return $stmt->fetchAll();
     }
 
-    public static function supprimerMessage($message_id, $pdo)
+    public static function supprimerMessage($id, $pdo)
     {
         $stmt = $pdo->prepare("DELETE FROM message WHERE id = ?");
-        $stmt->execute([$message_id]);
+        return $stmt->execute([$id]);
     }
 }
 ?>

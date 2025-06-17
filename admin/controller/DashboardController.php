@@ -21,5 +21,20 @@ class DashboardController
 
         require __DIR__ . '/../view/dashboard.php';
     }
+
+    public function json()
+    {
+        global $pdo;
+        header('Content-Type: application/json');
+        $nbUsers = $pdo->query("SELECT COUNT(*) FROM user")->fetchColumn();
+        $nbCommentaires = $pdo->query("SELECT COUNT(*) FROM commentaire")->fetchColumn();
+        $nbCommentairesEnAttente = $pdo->query("SELECT COUNT(*) FROM commentaire WHERE is_approved = 0")->fetchColumn();
+        echo json_encode([
+            'nbUsers' => $nbUsers,
+            'nbCommentaires' => $nbCommentaires,
+            'nbCommentairesEnAttente' => $nbCommentairesEnAttente,
+        ]);
+        exit;
+    }
 }
 ?>

@@ -9,13 +9,34 @@ class ProfilController
             session_start();
         }
         if (empty($_SESSION['user_id'])) {
-            header('Location: /?page=connexion');
+            if (isset($_GET['format']) && $_GET['format'] === 'json') {
+                header('Content-Type: application/json');
+                echo json_encode(['isConnected' => false]);
+                exit;
+            }
+            header('Location: /connexion.html');
             exit;
         }
 
         global $pdo;
         $model = new Utilisateur($pdo);
         $utilisateur = $model->getUtilisateur($_SESSION['user_id']);
+
+        if (isset($_GET['format']) && $_GET['format'] === 'json') {
+            header('Content-Type: application/json');
+            echo json_encode([
+                'isConnected' => true,
+                'isAdmin' => !empty($_SESSION['is_admin']),
+                'profil' => [
+                    'nom' => $utilisateur['nom'],
+                    'prenom' => $utilisateur['prenom'],
+                    'email' => $utilisateur['email'],
+                    'age' => $utilisateur['age'],
+                    'telephone' => $utilisateur['telephone'],
+                ]
+            ]);
+            exit;
+        }
 
         require 'view/profil.php';
     }
@@ -26,7 +47,7 @@ class ProfilController
             session_start();
         }
         if (empty($_SESSION['user_id'])) {
-            header('Location: /?page=connexion');
+            header('Location: /connexion.html');
             exit;
         }
 
@@ -41,9 +62,11 @@ class ProfilController
             $model = new Utilisateur($pdo);
             $model->updateUtilisateur($_SESSION['user_id'], $nom, $prenom, $email, $age, $telephone);
 
-            header('Location: /?page=profil');
+            header('Location: /profil.html');
             exit;
         }
     }
 }
+
+file_put_contents('/tmp/debug_session.txt', print_r($_SESSION, true));
 ?>

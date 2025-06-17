@@ -17,7 +17,7 @@ class UtilisateurController
             if ($email && !empty($mot_de_passe)) {
                 $utilisateur = new Utilisateur($pdo);
                 $utilisateur->inscrire($nom, $prenom, $email, $mot_de_passe, $age, $telephone);
-                header('Location: /gestion?page=utilisateurs');
+                header('Location: /gestion/utilisateurs.html');
                 exit;
             }
         }
@@ -41,7 +41,7 @@ class UtilisateurController
                         session_start();
                     $_SESSION['user_id'] = $utilisateurConnecte['id'];
                     $_SESSION['is_admin'] = $utilisateurConnecte['is_admin'];
-                    header('Location: /gestion?page=dashboard');
+                    header('Location: /gestion.html');
                     exit;
                 } else {
                     $erreur = "Identifiants invalides.";
@@ -73,7 +73,17 @@ class UtilisateurController
             $age = intval($_POST['age']);
             $telephone = htmlspecialchars(trim($_POST['telephone']));
             $utilisateur->update($id, $nom, $prenom, $email, $age, $telephone);
-            header('Location: /gestion?page=utilisateurs');
+
+            if (
+                isset($_SERVER['HTTP_ACCEPT']) &&
+                strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false
+            ) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true]);
+                exit;
+            }
+
+            header('Location: /gestion/utilisateurs.html');
             exit;
         }
 
@@ -84,10 +94,42 @@ class UtilisateurController
     public function supprimer($id)
     {
         global $pdo;
-        $pdo->prepare("DELETE FROM commentaire WHERE user_id = ?")->execute([$id]);
-        $utilisateur = new Utilisateur($pdo);
-        $utilisateur->delete($id);
-        header('Location: /gestion?page=utilisateurs');
+        $pdo->prepare("DELETE FROM message WHERE destinataire_id = ? OR expediteur_id = ?")->execute([$id, $id]);
+
+        $stmt = $pdo->prepare("DELETE FROM user WHERE id = ?");
+        $success = $stmt->execute([$id]);
+
+        if (
+            isset($_SERVER['HTTP_ACCEPT']) &&
+            strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false
+        ) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => $success]);
+            exit;
+        }
+
+        header('Location: /gestion/utilisateurs.html');
+        exit;
+    }
+
+    public function json()
+    {
+        global $pdo;
+        header('Content-Type: application/json');
+        $stmt = $pdo->query("SELECT * FROM user");
+        $utilisateurs = $stmt->fetchAll();
+        echo json_encode(['utilisateurs' => $utilisateurs]);
+        exit;
+    }
+
+    public function jsonById($id)
+    {
+        global $pdo;
+        header('Content-Type: application/json');
+        $stmt = $pdo->prepare("SELECT * FROM user WHERE id = ?");
+        $stmt->execute([$id]);
+        $user = $stmt->fetch();
+        echo json_encode(['utilisateur' => $user]);
         exit;
     }
 }

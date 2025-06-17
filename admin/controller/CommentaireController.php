@@ -17,7 +17,17 @@ class CommentaireController
         global $pdo;
         $model = new Commentaire($pdo);
         $model->approuverCommentaire($id);
-        header('Location: /gestion?page=commentaires');
+
+        if (
+            isset($_SERVER['HTTP_ACCEPT']) &&
+            strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false
+        ) {
+            header('Content-Type: application/json');
+            echo json_encode(['success' => true]);
+            exit;
+        }
+
+        header('Location: /commentaires.html');
         exit;
     }
 
@@ -26,7 +36,7 @@ class CommentaireController
         global $pdo;
         $model = new Commentaire($pdo);
         $model->refuserCommentaire($id);
-        header('Location: /gestion?page=commentaires');
+        header('Location: /gestion/commentaires.html');
         exit;
     }
 
@@ -39,7 +49,17 @@ class CommentaireController
             $contenu = $_POST['contenu'];
             $is_approved = isset($_POST['is_approved']) ? 1 : 0;
             $model->modifierCommentaire($id, $contenu, $is_approved);
-            header('Location: /gestion?page=commentaires');
+
+            if (
+                isset($_SERVER['HTTP_ACCEPT']) &&
+                strpos($_SERVER['HTTP_ACCEPT'], 'application/json') !== false
+            ) {
+                header('Content-Type: application/json');
+                echo json_encode(['success' => true]);
+                exit;
+            }
+
+            header('Location: /gestion/commentaires.html');
             exit;
         }
 
@@ -52,7 +72,31 @@ class CommentaireController
         global $pdo;
         $model = new Commentaire($pdo);
         $model->refuserCommentaire($id);
-        header('Location: /gestion?page=commentaires');
+        header('Location: /gestion/commentaires.html');
+        exit;
+    }
+
+    public function commentaires_json()
+    {
+        global $pdo;
+        header('Content-Type: application/json');
+        $model = new Commentaire($pdo);
+        $commentaires = $model->getCommentairesNonApprouves();
+        $tousCommentaires = $model->obtenirTousCommentaires();
+        echo json_encode([
+            'commentaires' => $commentaires,
+            'tousCommentaires' => $tousCommentaires
+        ]);
+        exit;
+    }
+
+    public function jsonById($id)
+    {
+        global $pdo;
+        header('Content-Type: application/json');
+        $model = new Commentaire($pdo);
+        $commentaire = $model->getCommentaireById($id);
+        echo json_encode(['commentaire' => $commentaire]);
         exit;
     }
 }

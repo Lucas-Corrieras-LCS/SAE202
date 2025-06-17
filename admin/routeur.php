@@ -1,4 +1,9 @@
 <?php
+ini_set('session.cookie_path', '/');
+ini_set('session.cookie_domain', 'mmi24b11.sae202.ovh');
+ini_set('session.cookie_samesite', 'Lax');
+ini_set('session.cookie_secure', '1');
+
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
@@ -8,22 +13,26 @@ require_once 'controller/UtilisateurController.php';
 require_once 'controller/CommentaireController.php';
 require_once 'controller/DashboardController.php';
 
+$page = $_GET['page'] ?? 'dashboard';
+
 if (empty($_SESSION['user_id']) || empty($_SESSION['is_admin']) || $_SESSION['is_admin'] != 1) {
-    echo '<!DOCTYPE html>
-    <html lang="fr">
-    <head>
-        <meta charset="UTF-8">
-        <title>Accès refusé</title>
-    </head>
-    <body>
-        <h1>Accès refusé</h1>
-        <p>Vous n\'êtes pas admin. <a href="/sae202/?page=inscription">Inscrivez-vous</a> ou <a href="/sae202/?page=connexion">connectez-vous</a> avec un compte admin.</p>
-    </body>
-    </html>';
+    header('Content-Type: application/json');
+    echo json_encode(['error' => 'Accès refusé', 'isConnected' => false, 'isAdmin' => false]);
     exit;
 }
 
-$page = $_GET['page'] ?? 'dashboard';
+if ($page === 'utilisateur_json' && isset($_GET['id'])) {
+    require_once 'controller/UtilisateurController.php';
+    $controller = new UtilisateurController();
+    $controller->jsonById($_GET['id']);
+    exit;
+}
+
+if ($page === 'commentaire_json' && isset($_GET['id'])) {
+    $controller = new CommentaireController();
+    $controller->jsonById($_GET['id']);
+    exit;
+}
 
 switch ($page) {
     case 'utilisateurs':
@@ -43,7 +52,6 @@ switch ($page) {
         $controller->index();
         break;
     case 'dashboard':
-    default:
         $controller = new DashboardController();
         $controller->index();
         break;
@@ -62,6 +70,29 @@ switch ($page) {
     case 'supprimer_commentaire':
         $controller = new CommentaireController();
         $controller->supprimer($_GET['id'] ?? null);
+        break;
+    case 'dashboard_json':
+        $controller = new DashboardController();
+        $controller->json();
+        break;
+    case 'utilisateurs_json':
+        $controller = new UtilisateurController();
+        $controller->json();
+        exit;
+    case 'commentaires_json':
+        $controller = new CommentaireController();
+        $controller->commentaires_json();
+        exit;
+    case 'supprimer_message':
+        if (isset($_GET['id'])) {
+            require_once 'controller/MessagerieController.php';
+            $controller = new MessagerieController();
+            $controller->supprimer();
+        }
+        exit;
+    default:
+        http_response_code(404);
+        echo "Page non trouvée.";
         break;
 }
 ?>
