@@ -2,12 +2,19 @@ DirectoryIndex index.html index.php
 
 RewriteEngine On
 
+# Redirige /gestion/.../ vers /gestion... (sans slash) seulement si ce n'est pas un dossier
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(gestion(?:/[^/]+)*)/$ /$1 [R=301,L]
+
+# Sert les .html à plat (Next.js 15+ export)
 RewriteCond %{REQUEST_FILENAME}.html -f
 RewriteRule ^(.+?)/?$ $1.html [L]
 
+# Routes admin
 RewriteRule ^gestion/?$ admin/routeur.php [QSA,L]
 RewriteRule ^gestion/(.*)$ admin/routeur.php?page=$1 [QSA,L]
 
+# Fallback MVC
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteRule ^(.*)$ index.php?page=$1 [QSA,L]

@@ -8,6 +8,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 session_start();
+
+file_put_contents(__DIR__ . '/debug_session.txt', print_r($_SESSION, true), FILE_APPEND);
+error_log("DEBUG SESSION ROUTEUR ADMIN");
+
 require_once __DIR__ . '/../conf/config.inc.php';
 require_once 'controller/UtilisateurController.php';
 require_once 'controller/CommentaireController.php';
@@ -95,4 +99,5 @@ switch ($page) {
         echo "Page non trouvée.";
         break;
 }
+
 ?>
