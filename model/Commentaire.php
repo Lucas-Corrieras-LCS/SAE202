@@ -8,15 +8,22 @@ class Commentaire
         $this->pdo = $pdo;
     }
 
-    public function ajouterCommentaire($user_id, $contenu)
+    public function ajouterCommentaire($user_id, $contenu, $note)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO commentaire (user_id, contenu, is_approved, created_at) VALUES (?, ?, 0, NOW())");
-        return $stmt->execute([$user_id, $contenu]);
+        $stmt = $this->pdo->prepare("INSERT INTO commentaire (user_id, contenu, note, is_approved, created_at) VALUES (?, ?, ?, 0, NOW())");
+        return $stmt->execute([$user_id, $contenu, $note]);
     }
 
     public function obtenirCommentaires()
     {
-        $stmt = $this->pdo->query("SELECT * FROM commentaire WHERE is_approved = 1 ORDER BY created_at DESC");
+        $stmt = $this->pdo->query("
+            SELECT c.*, u.prenom, u.nom
+            FROM commentaire c
+            JOIN user u ON c.user_id = u.id
+            WHERE c.is_approved = 1
+            ORDER BY c.note DESC, c.created_at DESC
+            LIMIT 3
+        ");
         return $stmt->fetchAll();
     }
 
@@ -38,4 +45,4 @@ class Commentaire
         return $stmt->fetchAll();
     }
 }
-?>
+

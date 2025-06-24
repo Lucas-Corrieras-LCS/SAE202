@@ -27,7 +27,7 @@ class CommentaireController
             exit;
         }
 
-        header('Location: /commentaires.html');
+        header('Location: /gestion?page=commentaires');
         exit;
     }
 
@@ -36,7 +36,7 @@ class CommentaireController
         global $pdo;
         $model = new Commentaire($pdo);
         $model->refuserCommentaire($id);
-        header('Location: /gestion/commentaires.html');
+        header('Location: /gestion?page=commentaires');
         exit;
     }
 
@@ -59,7 +59,7 @@ class CommentaireController
                 exit;
             }
 
-            header('Location: /gestion/commentaires.html');
+            header('Location: /gestion?page=commentaires');
             exit;
         }
 
@@ -72,7 +72,7 @@ class CommentaireController
         global $pdo;
         $model = new Commentaire($pdo);
         $model->refuserCommentaire($id);
-        header('Location: /gestion/commentaires.html');
+        header('Location: /gestion?page=commentaires');
         exit;
     }
 

@@ -8,10 +8,10 @@ class Commentaire
         $this->pdo = $pdo;
     }
 
-    public function ajouterCommentaire($user_id, $contenu)
+    public function ajouterCommentaire($user_id, $contenu, $note)
     {
-        $stmt = $this->pdo->prepare("INSERT INTO commentaire (user_id, contenu, is_approved, created_at) VALUES (?, ?, 0, NOW())");
-        return $stmt->execute([$user_id, $contenu]);
+        $stmt = $this->pdo->prepare("INSERT INTO commentaire (user_id, contenu, note, is_approved, created_at) VALUES (?, ?, ?, 0, NOW())");
+        return $stmt->execute([$user_id, $contenu, $note]);
     }
 
     public function obtenirCommentaires()

@@ -83,7 +83,7 @@ class UtilisateurController
                 exit;
             }
 
-            header('Location: /gestion/utilisateurs.html');
+            header('Location: /gestion?page=utilisateurs');
             exit;
         }
 
@@ -108,7 +108,7 @@ class UtilisateurController
             exit;
         }
 
-        header('Location: /gestion/utilisateurs.html');
+        header('Location: /gestion?page=utilisateurs');
         exit;
     }
 

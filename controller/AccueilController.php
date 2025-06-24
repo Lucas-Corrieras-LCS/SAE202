@@ -1,6 +1,6 @@
 <?php
 require_once 'model/AccueilModel.php';
-require_once 'admin/model/Commentaire.php';
+require_once 'model/Commentaire.php';
 
 class AccueilController
 {
@@ -9,9 +9,10 @@ class AccueilController
         global $pdo;
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_SESSION['user_id'])) {
             $contenu = trim($_POST['contenu']);
-            if (!empty($contenu)) {
+            $note = isset($_POST['note']) ? intval($_POST['note']) : 5;
+            if (!empty($contenu) && $note >= 1 && $note <= 5) {
                 $commentaireModel = new Commentaire($pdo);
-                $commentaireModel->ajouterCommentaire($_SESSION['user_id'], $contenu);
+                $commentaireModel->ajouterCommentaire($_SESSION['user_id'], $contenu, $note);
                 header('Location: /index.html');
                 exit;
             }
@@ -22,17 +23,17 @@ class AccueilController
 
 
         $commentaireModel = new Commentaire($pdo);
-        $commentaires = $commentaireModel->obtenirCommentaires();
+        $donnees = $commentaireModel->obtenirCommentaires();
 
         require 'view/accueil.php';
     }
 
     public function json()
     {
-        $model = new AccueilModel();
-        $donnees = $model->getAccueil();
-
-        $isConnected = isset($_SESSION['user_id']);
+        global $pdo;
+        $commentaireModel = new Commentaire($pdo);
+        $donnees = $commentaireModel->obtenirCommentaires();
+        $isConnected = !empty($_SESSION['user_id']);
         $isAdmin = !empty($_SESSION['is_admin']);
 
         echo json_encode([

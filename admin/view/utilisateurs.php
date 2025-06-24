@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Liste des Utilisateurs - Back-office</title>
+    <link rel="stylesheet" href="/admin/view/global.css">
 </head>
 
 <body>

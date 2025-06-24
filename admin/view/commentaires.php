@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Gestion des Commentaires - Back-office</title>
+    <link rel="stylesheet" href="/admin/view/global.css">
 </head>
 
 <body>

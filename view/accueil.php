@@ -18,6 +18,14 @@
             <h2>Ajouter un commentaire</h2>
             <form method="post" action="">
                 <textarea name="contenu" required placeholder="Votre commentaire"></textarea><br>
+                <label for="note">Note :</label>
+                <select name="note" id="note" required>
+                    <option value="5">★★★★★</option>
+                    <option value="4">★★★★☆</option>
+                    <option value="3">★★★☆☆</option>
+                    <option value="2">★★☆☆☆</option>
+                    <option value="1">★☆☆☆☆</option>
+                </select><br>
                 <button type="submit">Envoyer</button>
             </form>
         <?php else: ?>
@@ -26,7 +34,17 @@
             </p>
         <?php endif; ?>
         <?php foreach ($donnees as $commentaire): ?>
-            <li><?= htmlspecialchars($commentaire['contenu']) ?></li>
+            <li>
+                <strong><?= htmlspecialchars($commentaire['prenom']) ?>
+                    <?= htmlspecialchars($commentaire['nom']) ?></strong>
+                : <?= htmlspecialchars($commentaire['contenu']) ?>
+                <span style="color:gold;">
+                    <?php
+                    $stars = intval($commentaire['note']);
+                    echo str_repeat('★', $stars) . str_repeat('☆', 5 - $stars);
+                    ?>
+                </span>
+            </li>
         <?php endforeach; ?>
     </ul>
 </body>

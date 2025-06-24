@@ -16,6 +16,5 @@
       <li><a href="/?page=inscription">Inscription</a></li>
       <li><a href="/?page=connexion">Connexion</a></li>
     <?php endif; ?>
-    <li><a href="/?page=mentions-legales">Mentions légales</a></li>
   </ul>
 </nav>

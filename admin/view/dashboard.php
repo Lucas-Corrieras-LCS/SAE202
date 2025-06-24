@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Tableau de Bord - Administration</title>
+    <link rel="stylesheet" href="/admin/view/global.css">
 </head>
 
 <body>

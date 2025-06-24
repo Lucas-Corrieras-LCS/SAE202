@@ -27,7 +27,9 @@ $pages_autorisees = [
 ];
 
 if (!in_array($page, $pages_autorisees)) {
-    $page = 'accueil';
+    http_response_code(404);
+    include __DIR__ . '/../404.html';
+    exit;
 }
 
 $pages_privees = ['messagerie', 'profil', 'commentaire/proposer'];
@@ -106,5 +108,7 @@ if (file_exists($controllerFile)) {
     }
 }
 
-echo "Page non trouvée.";
+http_response_code(404);
+include __DIR__ . '/404.html';
+exit;
 ?>
